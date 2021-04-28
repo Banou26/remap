@@ -494,5 +494,6 @@ const loadKeymap = async (
     }
     keymaps.push(keymapsResult.keymap!);
   }
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA loadKeymap', keymaps)
   return keymaps;
 };
