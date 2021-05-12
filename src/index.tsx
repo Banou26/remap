@@ -26,35 +26,6 @@ const getKeeb =
         console.log('keyboard', keyboard)
         await keyboard.open()
         console.log('fetchBacklightBrightness', await keyboard.fetchBacklightBrightness())
-        // for (let i = 50; i--; i) {
-        //   for (let i2 = 50; i2--; i2) {
-        //     for (let i3 = 50; i3--; i3) {
-        //       console.log('fetchKeymaps', await keyboard.fetchKeymaps(i,i2,i3, 'en-us'))
-        //     }
-        //   }
-        // }
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,0,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,1,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,2,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,3,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,4,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,5,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,6,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,7,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,8,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,9,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,10,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,11,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,12,0, 'en-us'))
-        // console.log('fetchKeymaps', await keyboard.fetchKeymaps(0,13,0, 'en-us'))
-        // @ts-ignore
-        var groupBy = function(xs, key) {
-          // @ts-ignore
-          return xs.reduce(function(rv, x) {
-            (rv[x[key]] = rv[x[key]] || []).push(x);
-            return rv;
-          }, {});
-        };
 
         const layersNumber = 4
         const rowSize = 5
@@ -73,20 +44,33 @@ const getKeeb =
               }))
               .map(keymap => keymap.keycodeInfo.label)
 
-          console.log('keymaps', keymaps)
-          // @ts-ignore
           const layers =
             Array(layersNumber)
               .fill(undefined)
-              // .map((_, i) => [columnSize * i, columnSize * (i + 1)])
               .map((_, layer) =>
                 Array(rowSize)
                   .fill(undefined)
-                  .map((_, row) => keymaps.slice((columnSize * rowSize * layer) + columnSize * row, (columnSize * rowSize * layer) + columnSize * (row + 1)).join(' '))
+                  .map((_, row) => keymaps.slice((columnSize * rowSize * layer) + columnSize * row, (columnSize * rowSize * layer) + columnSize * (row + 1)))
+              )
+
+          const longestKey = layers.flat().sort((a, b) => a.length - b.length).pop()
+          if (!longestKey) return
+          const consoleLayers =
+            layers
+              .map((_, layer) =>
+                Array(rowSize)
+                  .fill(undefined)
+                  .map((_, row) =>
+                    keymaps
+                      .slice((columnSize * rowSize * layer) + columnSize * row, (columnSize * rowSize * layer) + columnSize * (row + 1))
+                      .map(key => key.replace(/(▽)|(Any)/, ' ').padEnd(longestKey.length - 5, ' '))
+                      .join(' ')
+                      .trim()
+                  )
                   .join('\n')
               )
-              .forEach((str, i) => console.log(`layer ${i}:\n${str}`))
-          // console.log('layers', layers)
+            
+          consoleLayers.forEach((str, i) => console.log(`console layer ${i}:\n${str}`))
         } catch (err) {
           console.error(err)
         }
