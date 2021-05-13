@@ -42,7 +42,7 @@ const getKeeb =
                 row: key.split(',').shift(),
                 column: key.split(',').shift()
               }))
-              .map(keymap => keymap.keycodeInfo.label)
+              .map(keymap => keymap.keycodeInfo)
 
           const layers =
             Array(layersNumber)
@@ -63,7 +63,7 @@ const getKeeb =
                   .map((_, row) =>
                     keymaps
                       .slice((columnSize * rowSize * layer) + columnSize * row, (columnSize * rowSize * layer) + columnSize * (row + 1))
-                      .map(key => key.replace(/(▽)|(Any)/, ' ').padEnd(longestKey.length - 5, ' '))
+                      .map(key => `${key.label.replace(/(▽)|(Any)/, ' ')}(${key.code})`.padEnd(longestKey.length - 1, ' '))
                       .join(' ')
                       .trim()
                   )
@@ -71,6 +71,9 @@ const getKeeb =
               )
             
           consoleLayers.forEach((str, i) => console.log(`console layer ${i}:\n${str}`))
+
+        // keyboard.updateKeymap(0, 1, 1, 26)
+
         } catch (err) {
           console.error(err)
         }
