@@ -773,6 +773,7 @@ export class WebHid implements IHid {
 
   async detectKeyboards(): Promise<IKeyboard[]> {
     const devices = await (navigator as any).hid.getDevices();
+    console.log(devices)
     return devices
       .filter((device: any) => {
         const collectionInfo = device.collections[0];
